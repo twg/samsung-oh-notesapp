@@ -22,7 +22,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name=".service.NotesAppService" />
+
+        <service android:name="com.twg.notesapp.service.NotesAppService" />
+
+        <activity
+            android:name="com.twg.notesapp.NotesDetailActivity"
+            android:label="@string/title_activity_notes_detail" >
+        </activity>
     </application>
 
 </manifest>

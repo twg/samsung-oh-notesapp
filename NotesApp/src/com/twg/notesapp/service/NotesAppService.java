@@ -116,5 +116,11 @@ public class NotesAppService extends Service {
 	public IBinder onBind(Intent arg0) {
 		return null;
 	}
+	
+	@Override
+	public void onDestroy() {
+		this.database.close();
+		super.onDestroy();
+	}
 
 }

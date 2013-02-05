@@ -3,6 +3,7 @@ package com.twg.notesapp;
 import java.util.ArrayList;
 
 import com.twg.notesapp.AppConstants.IntentKeys;
+import com.twg.notesapp.AppConstants.ModelProperties;
 import com.twg.notesapp.AppConstants.ModelTypes;
 import com.twg.notesapp.AppConstants.Reads;
 import com.twg.notesapp.model.NoteModel;
@@ -49,7 +50,12 @@ public class NotesActivity extends Activity implements ServiceResultHandler{
         this.notesView.setOnItemClickListener(new OnItemClickListener() {
 
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // TODO: onclick
+            	final NoteModel model = NotesActivity.this.models.get(position);
+                final Intent intent = new Intent(NotesActivity.this, NotesDetailActivity.class);
+                final Bundle bundle = new Bundle();
+                bundle.putInt(ModelProperties.ID, model.getId());
+                intent.putExtras(bundle);
+                NotesActivity.this.startActivity(intent);
             }
         });
 
