@@ -7,10 +7,16 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.twg.notesapp.AppConstants.IntentKeys;
+import com.twg.notesapp.AppConstants.ModelTypes;
+import com.twg.notesapp.adapters.NotesAdapter;
 import com.twg.notesapp.database.Database;
 import com.twg.notesapp.database.DatabaseException;
 import com.twg.notesapp.database.DatabaseImpl;
+import com.twg.notesapp.database.DatabaseOpenHelper;
 import com.twg.notesapp.intentprocessors.IntentProcessor;
+import com.twg.notesapp.intentprocessors.NotesIntentProcessor;
+import com.twg.notesapp.network.Network;
+import com.twg.notesapp.network.NetworkImpl;
 
 import android.app.Service;
 import android.content.Intent;
@@ -30,13 +36,16 @@ public class NotesAppService extends Service {
 	private LinkedList<Intent> intentQueue = new LinkedList<Intent>();
 	private final HashMap<String, IntentProcessor> intentProcessors = new HashMap<String, IntentProcessor>();
 
-    private Database database;
+	private Database database;
+	private Network network;
 
 	@Override
 	public void onCreate() {
 		super.onCreate();
 
-		this.database = new DatabaseImpl();
+		this.database = new DatabaseImpl(new DatabaseOpenHelper(this),
+				new ArrayList<Runnable>());
+		this.network = new NetworkImpl();
 
 		try {
 			this.database.open();
@@ -52,9 +61,13 @@ public class NotesAppService extends Service {
 			Log.e("Freshbooks Engine", "Failed to open the database", e);
 		}
 	}
-	
+
 	private void initIntentProcessors() {
-		
+		final NotesAdapter notesAdapter = new NotesAdapter(this.database,
+				this.network);
+		final NotesIntentProcessor notesIntentProcessor = new NotesIntentProcessor(
+				notesAdapter);
+		this.intentProcessors.put(ModelTypes.NOTES, notesIntentProcessor);
 	}
 
 	@Override
@@ -102,6 +115,12 @@ public class NotesAppService extends Service {
 	@Override
 	public IBinder onBind(Intent arg0) {
 		return null;
+	}
+	
+	@Override
+	public void onDestroy() {
+		this.database.close();
+		super.onDestroy();
 	}
 
 }
