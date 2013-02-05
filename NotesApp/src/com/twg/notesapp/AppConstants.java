@@ -19,4 +19,8 @@ public class AppConstants {
         public static final int ERROR = 2;
         public static final int COMPLETE = 3;
     }
+    
+    public static class ModelTypes {
+        public static final String NOTES = "notes";
+    }
 }
